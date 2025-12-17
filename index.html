@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google-site-verification" content="FW-lfIucptn9hb-lu_PTZCsTdNHKy3ucKJd7jgi0wIE" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Cập nhật Firmware HUD Mini V1 V2 - TechZone Automotive</title>
+    <meta name="description" content="Công cụ cập nhật firmware HUD Mini V1 V2 trực tuyến. Cấu hình màn hình, giao diện, cảnh báo tốc độ cho thiết bị HUD Mini. Không cần cài đặt phần mềm.">
+    <meta name="keywords" content="Cập nhật HUD Mini, cập nhật firmware HUD Mini, flash HUD Mini, HUD Mini V1, HUD Mini V2, cấu hình HUD Mini, firmware HUD Mini, TechZone Automotive, Mini HUD Vietnam, HUD xe hơi, heads up display, cập nhật HUD không dây">
+    <meta name="author" content="TechZone Automotive">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Vietnamese">
+    <meta name="revisit-after" content="7 days">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://techzone-automotive.github.io/Update_HUD_Mini/">
+    <meta property="og:title" content="Cập nhật Firmware HUD Mini V1 V2">
+    <meta property="og:description" content="Công cụ cập nhật firmware HUD Mini trực tuyến. Cấu hình màn hình, giao diện, cảnh báo tốc độ. Không cần cài đặt phần mềm.">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:site_name" content="TechZone Automotive">
+    
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "HUD Mini Firmware Updater",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Web Browser (Chrome, Edge)",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "VND"
+      },
+      "description": "Công cụ cập nhật firmware trực tuyến cho HUD Mini V1 và V2. Cấu hình màn hình, giao diện và các tính năng khác.",
+      "provider": {
+        "@type": "Organization",
+        "name": "TechZone Automotive",
+        "url": "https://www.facebook.com/49techzone"
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Làm sao biết thiết bị của tôi là V1 hay V2?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "HUD Mini V1 có thiết kế hình vuông. HUD Mini V2 có thiết kế hình tròn với mặt kính tràn viền."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Tại sao không thấy cổng COM khi cài firmware?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Có thể do: Cáp USB chỉ hỗ trợ sạc không truyền dữ liệu, chưa cài driver USB to Serial (CH340/CP2102/CH9102), cổng USB bị lỗi, hoặc thiết bị chưa được nhận diện."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Có mất dữ liệu khi cập nhật firmware không?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "KHÔNG. Các cài đặt cá nhân như xoay màn hình, UI, cảnh báo tốc độ, âm thanh sẽ được giữ nguyên sau khi cập nhật firmware."
+          }
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Import esp-web-tools -->
+    <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+    
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .warning-box::before {
+            content: '⚠️';
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        /* ACCORDION STYLES */
+        .accordion {
+            margin: 15px 0;
+        }
+        
+        .accordion-item {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .accordion-item.active {
+            border-color: #667eea;
+        }
+        
+        .accordion-header {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 18px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+            user-select: none;
+        }
+        
+        .accordion-item.active .accordion-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+        }
+        
+        .accordion-item.active .accordion-header:hover {
+            background: linear-gradient(135deg, #5568d3, #6a3f8f);
+        }
+        
+        .accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .accordion-icon {
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .accordion-item.active .accordion-content {
+            max-height: 2000px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .accordion-body {
+            padding: 20px;
+            background: white;
+        }
+        
+        .firmware-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .firmware-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: #f8f9fa;
+        }
+        
+        .firmware-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .firmware-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+        
+        .firmware-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        esp-web-install-button {
+            display: block;
+            margin: 20px 0;
+        }
+        
+        esp-web-install-button::part(button) {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        esp-web-install-button::part(button):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+            background: #f8f9fa;
+        }
+        
+        .status-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        
+        .config-row {
+            display: grid;
+            grid-template-columns: 150px 1fr 100px;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .config-row label {
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .success-box::before {
+            content: '✅';
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        
+        .step-content {
+            color: #555;
+            line-height: 1.8;
+        }
+        
+        .step-content ul {
+            margin: 10px 0 10px 20px;
+        }
+        
+        .step-content ul li {
+            margin-bottom: 8px;
+        }
+        
+        .tip-box {
+            background: #fff9e6;
+            border-left: 4px solid #ffa726;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .tip-box::before {
+            content: '💡 ';
+            font-weight: bold;
+        }
+        
+        .com-port-guide {
+            background: #f0f7ff;
+            border: 2px solid #2196F3;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        
+        .com-port-guide h4 {
+            color: #1976D2;
+            margin-bottom: 12px;
+        }
+        
+        .com-port-guide ol {
+            margin-left: 20px;
+            color: #555;
+            line-height: 1.8;
+        }
+        
+        .com-port-guide ol li {
+            margin-bottom: 8px;
+        }
+        
+        .com-port-screenshot {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-style: italic;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .config-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .config-row label {
+                text-align: left;
+            }
+        }
+        
+        /* FOOTER STYLES */
+        .footer {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        
+        .footer-brand {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .footer-tagline {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        .footer-divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #667eea, #764ba2, transparent);
+            margin: 20px auto;
+            max-width: 300px;
+        }
+        
+        .footer-info {
+            color: #888;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        
+        .footer-info a {
+            color: #667eea;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-info a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        .footer-copyright {
+            color: #aaa;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+        
+        .footer-social {
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+        
+        .footer-social a {
+            color: #667eea;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            padding: 8px 20px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            background: transparent;
+        }
+        
+        .footer-social a:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Cập nhật và Cấu hình HUD Mini</h1>
+        <p class="subtitle">Cập nhật Firmware và Cấu hình tùy chỉnh cho HUD Mini V1 - V2</p>
+        
+        <div class="warning-box">
+            <div>
+                <strong>Yêu cầu:</strong> Chrome hoặc Edge trên máy tính. Không hỗ trợ Safari, Firefox hoặc iOS.
+            </div>
+        </div>
+
+        <!-- HƯỚNG DẪN SỬ DỤNG (ACCORDION) -->
+        <div class="card">
+            <h2>📖 Hướng dẫn sử dụng</h2>
+            
+            <div class="info-box">
+                <strong>Mới bắt đầu?</strong> Nhấn vào từng mục bên dưới để xem hướng dẫn chi tiết
+            </div>
+            
+            <div class="accordion">
+                <!-- Step 1: Chuẩn bị -->
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <span>🔧</span>
+                            <span>Bước 1: Chuẩn bị thiết bị và công cụ</span>
+                        </div>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="step-content">
+                                <p><strong>Những gì bạn cần:</strong></p>
+                                <ul>
+                                    <li>✅ Thiết bị HUD Mini V1 (hình vuông) hoặc V2 (hình tròn)</li>
+                                    <li>✅ Cáp USB Type-C để kết nối HUD với máy tính</li>
+                                    <li>✅ Máy tính với trình duyệt Chrome hoặc Edge</li>
+                                    <li>✅ Kết nối Internet ổn định</li>
+                                </ul>
+                                <div class="tip-box">
+                                    <strong>Quan trọng:</strong> Đảm bảo cáp USB hoạt động tốt và hỗ trợ truyền dữ liệu (không chỉ sạc).
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Xác định cổng COM -->
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <span>🔌</span>
+                            <span>Bước 2: Cách xác định cổng COM của thiết bị</span>
+                        </div>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="com-port-guide">
+                                <h4>📍 Hướng dẫn tìm cổng COM trên Windows:</h4>
+                                <ol>
+                                    <li><strong>Cắm HUD Mini</strong> vào máy tính qua cáp USB Type-C</li>
+                                    <li>Nhấn tổ hợp phím <strong>Windows + X</strong>, chọn <strong>"Device Manager"</strong> (Trình quản lý thiết bị)</li>
+                                    <li>Tìm mục <strong>"Ports (COM & LPT)"</strong> và mở rộng</li>
+                                    <li>Bạn sẽ thấy thiết bị với tên như:
+                                        <ul>
+                                            <li><strong>USB-SERIAL CH340 (COM3)</strong></li>
+                                            <li><strong>USB Serial Device (COM5)</strong></li>
+                                            <li><strong>USB-Enhanced SERIAL CH9102 (COM6)</strong></li>
+                                        </ul>
+                                    </li>
+                                    <li>Số <strong>COM</strong> trong ngoặc là cổng của thiết bị (ví dụ: COM3, COM4,...)</li>
+                                </ol>
+                                
+                                <div class="tip-box">
+                                    <strong>Mẹo nhận biết:</strong> Rút cáp USB ra, cổng COM sẽ biến mất. Cắm lại thì xuất hiện trở lại - đó chính là cổng của HUD Mini!
+                                </div>
+                                
+                                <h4 style="margin-top: 15px;">📍 Nếu không thấy cổng COM:</h4>
+                                <ul>
+                                    <li>Thử cổng USB khác trên máy tính</li>
+                                    <li>Kiểm tra cáp USB (thử cáp khác nếu có)</li>
+                                    <li>Cài driver cho chip USB to Serial:
+                                        <ul>
+                                            <li><strong>CH340/CH9102:</strong> <a href="https://drive.google.com/file/d/1mxIa3mzsWyAXhIbco931gy7lPy6j_81X/view?usp=drive_link" target="_blank">Tải ở đây</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Cập nhật Firmware -->
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <span>📦</span>
+                            <span>Bước 3: Cập nhật Firmware</span>
+                        </div>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="step-content">
+                                <p><strong>Thực hiện theo các bước sau:</strong></p>
+                                <ol>
+                                    <li>Kết nối HUD Mini với máy tính bằng cáp USB</li>
+                                    <li>Cuộn xuống phần <strong>"📦 Cập nhật Firmware"</strong> bên dưới</li>
+                                    <li>Chọn đúng phiên bản thiết bị (V1 hoặc V2)</li>
+                                    <li>Nhấn nút <strong>"🚀 INSTALL - CÀI ĐẶT FIRMWARE"</strong></li>
+                                    <li>Trong cửa sổ popup:
+                                        <ul>
+                                            <li>Chọn cổng COM của thiết bị (ví dụ: USB-SERIAL CH340)</li>
+                                            <li>Nhấn <strong>"Connect"</strong></li>
+                                        </ul>
+                                    </li>
+                                    <li>Nhấn <strong>"INSTALL HUD MINI" -> "Install"</strong> và chờ (khoảng 5 phút)</li>
+                                    <li>Khi thấy <strong>"Installation complete!"</strong> là hoàn tất. Nhấn dấu <strong>X</strong> ở góc trên cửa sổ cài đặt để đóng trình cập nhật</li>
+                                </ol>
+                                <div class="warning-box" style="margin-top: 15px;">
+                                    <div>
+                                        <strong>Cảnh báo:</strong> KHÔNG ngắt kết nối USB trong khi đang cập nhật firmware! Có thể làm hỏng thiết bị.
+                                    </div>
+                                </div>
+                                <div class="tip-box">
+                                    <strong>Lưu ý:</strong> Nếu đang kết nối Serial ở phần Cấu hình, hệ thống sẽ tự động ngắt kết nối trước khi flash firmware để tránh xung đột cổng COM. Nhấn <strong>"Try Again"</strong> nếu có.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Cấu hình thiết bị -->
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <span>⚙️</span>
+                            <span>Bước 4: Cấu hình thiết bị (tùy chọn)</span>
+                        </div>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="step-content">
+                                <p><strong>Sau khi cập nhật firmware, bạn có thể tùy chỉnh:</strong></p>
+                                <ul>
+                                    <li><strong>Xoay màn hình:</strong> Chọn hướng hiển thị phù hợp (1-8)</li>
+                                    <li><strong>Giao diện:</strong> Chọn kiểu UI ưa thích (UI 1-5)</li>
+                                    <li><strong>Cảnh báo tốc độ:</strong> Thiết lập ngưỡng cảnh báo (+0 đến +9 km/h)</li>
+                                    <li><strong>Âm thanh khởi động:</strong> Chọn âm thanh khi bật (chỉ V2)</li>
+                                </ul>
+                                
+                                <p style="margin-top: 15px;"><strong>Cách thực hiện:</strong></p>
+                                <ol>
+                                    <li>Cuộn xuống phần <strong>"⚙️ Cấu hình qua Serial"</strong></li>
+                                    <li>Nhấn nút <strong>"🔌 Kết nối Serial"</strong></li>
+                                    <li>Chọn cổng COM trong popup và kết nối</li>
+                                    <li>Chọn các tùy chỉnh mong muốn và nhấn <strong>"Gửi"</strong> cho từng mục</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 5: Khắc phục sự cố -->
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <span>🔧</span>
+                            <span>Bước 5: Khắc phục sự cố thường gặp</span>
+                        </div>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <div class="step-content">
+                                <p><strong>Các vấn đề thường gặp và cách xử lý:</strong></p>
+                                
+                                <h4 style="color: #667eea; margin: 15px 0 8px 0;">❌ Không thấy cổng COM</h4>
+                                <ul>
+                                    <li>Kiểm tra lại cáp USB (thử cáp khác)</li>
+                                    <li>Thử cổng USB khác trên máy tính</li>
+                                    <li>Cài driver CH340/CH9102 (xem Bước 2)</li>
+                                    <li>Khởi động lại máy tính</li>
+                                </ul>
+                                
+                                <h4 style="color: #667eea; margin: 15px 0 8px 0;">❌ Lỗi kết nối Serial</h4>
+                                <ul>
+                                    <li>Đóng tất cả ứng dụng khác đang sử dụng cổng COM</li>
+                                    <li>Ngắt kết nối Serial và thử lại</li>
+                                    <li>Rút cáp USB, đợi 5 giây rồi cắm lại</li>
+                                </ul>
+                                
+                                <h4 style="color: #667eea; margin: 15px 0 8px 0;">❌ Cập nhật firmware thất bại</h4>
+                                <ul>
+                                    <li>Đảm bảo KHÔNG ngắt USB trong quá trình flash</li>
+                                    <li>Thử lại từ đầu và chọn đúng cổng COM</li>
+                                    <li>Thử tốc độ flash chậm hơn (nếu có tùy chọn)</li>
+                                    <li>Kiểm tra cáp USB chất lượng tốt</li>
+                                </ul>
+                                
+                                <h4 style="color: #667eea; margin: 15px 0 8px 0;">❌ Thiết bị không phản hồi sau flash</h4>
+                                <ul>
+                                    <li>Rút cáp USB, đợi 10 giây</li>
+                                    <li>Cắm lại và đợi thiết bị khởi động (10-15 giây)</li>
+                                    <li>Nếu vẫn không hoạt động, flash lại firmware</li>
+                                </ul>
+                                
+                                <div class="warning-box" style="margin-top: 15px;">
+                                    <div>
+                                        <strong>Cần hỗ trợ thêm?</strong> Nếu vẫn gặp lỗi, hãy liên hệ bộ phận hỗ trợ kỹ thuật với thông tin chi tiết về lỗi.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 1: FLASH FIRMWARE -->
+        <div class="card">
+            <h2>📦 Cập nhật Firmware</h2>
+            
+            <div class="info-box">
+                <strong>Hướng dẫn nhanh:</strong> Chọn phiên bản thiết bị của bạn, sau đó nhấn nút "INSTALL" để bắt đầu.
+            </div>
+            
+            <h3 style="margin: 20px 0 15px 0; color: #667eea;">Chọn phiên bản thiết bị:</h3>
+            
+            <div class="firmware-grid">
+                <div class="firmware-card" data-manifest="manifest_v1.json" data-hardware="V1">
+                    <div class="firmware-name">🎯 HUD MINI V1</div>
+                    <div style="font-size: 12px; color: #999; margin-top: 5px;">Hình vuông</div>
+                </div>
+                
+                <div class="firmware-card selected" data-manifest="manifest_v2.json" data-hardware="V2">
+                    <div class="firmware-name">🎯 HUD MINI V2</div>
+                    <div style="font-size: 12px; color: #999; margin-top: 5px;">Hình tròn</div>
+                </div>
+            </div>
+            
+            <div id="flash-button-container">
+            </div>
+            
+            <div class="success-box" style="display: none;" id="success-message">
+                <div>
+                    <strong>Hoàn thành!</strong> Thiết bị đã được cập nhật firmware thành công. Bạn có thể tiếp tục cấu hình ở phần bên dưới.
+                </div>
+            </div>
+            
+            <div class="tip-box">
+                <strong>Lưu ý:</strong> Nếu đang kết nối Serial ở phần cấu hình, hệ thống sẽ tự động ngắt kết nối trước khi flash để tránh xung đột cổng COM.
+            </div>
+        </div>
+
+        <!-- CARD 2: SERIAL CONFIG -->
+        <div class="card">
+            <h2>⚙️ Cấu hình qua Serial</h2>
+            
+            <div class="info-box">
+                <strong>Chú ý:</strong> Trước khi cấu hình, đảm bảo bạn đã cập nhật firmware thành công ở phần trên. Sau đó nhấn nút "Kết nối Serial" để bắt đầu.
+            </div>
+            
+            <button id="btnConnect">🔌 Kết nối Serial</button>
+            <div id="status" class="status-box">📡 Chưa kết nối</div>
+            
+            <div id="config-controls" style="display: none;">
+                
+                <!-- 1. VERSION CHECK -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                    <h3 style="color: #667eea; margin: 0 0 10px 0;">1️⃣ Kiểm tra phiên bản Firmware</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Kiểm tra phiên bản firmware hiện tại của thiết bị để đảm bảo đã cập nhật thành công.</p>
+                    <button id="btnCheckVersion">📋 Gửi lệnh VERSION</button>
+                    <div id="versionDisplay" style="
+                        background: white;
+                        border: 2px solid #667eea;
+                        padding: 15px;
+                        border-radius: 8px;
+                        text-align: center;
+                        font-size: 18px;
+                        font-weight: bold;
+                        color: #667eea;
+                        margin-top: 15px;
+                    ">Chưa kiểm tra</div>
+                </div>
+                
+                <!-- 2. SCREEN ROTATION -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                    <h3 style="color: #667eea; margin: 0 0 10px 0;">2️⃣ Xoay màn hình</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Chọn hướng hiển thị phù hợp với cách bạn lắp đặt HUD. Thử từng hướng để tìm góc nhìn tốt nhất.</p>
+                    <div class="config-row">
+                        <label>Chọn hướng:</label>
+                        <select id="selRotation">
+                            <option value="1">Hướng 1</option>
+                            <option value="2">Hướng 2</option>
+                            <option value="3">Hướng 3</option>
+                            <option value="4">Hướng 4</option>
+                            <option value="5">Hướng 5</option>
+                            <option value="6">Hướng 6</option>
+                            <option value="7">Hướng 7</option>
+                            <option value="8">Hướng 8</option>
+                        </select>
+                        <button id="btnRotation">Gửi</button>
+                    </div>
+                </div>
+                
+                <!-- 3. UI SELECTION -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                    <h3 style="color: #667eea; margin: 0 0 10px 0;">3️⃣ Chọn giao diện UI</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Chọn kiểu giao diện hiển thị thông tin theo sở thích của bạn.</p>
+                    <div class="config-row">
+                        <label>Giao diện:</label>
+                        <select id="selUI">
+                            <option value="U1">UI 1</option>
+                            <option value="U2">UI 2</option>
+                            <option value="U3">UI 3</option>
+                            <option value="U4">UI 4</option>
+                            <option value="U5">UI 5</option>
+                            <option value="U6">UI 6</option>
+                            <option value="U7">UI 7</option>
+                            <option value="U8">UI 8</option>
+                            <option value="U9">UI 9</option>
+                        </select>
+                        <button id="btnUI">Gửi</button>
+                    </div>
+                </div>
+                
+                <!-- 4. SPEED LIMIT WARNING -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                    <h3 style="color: #667eea; margin: 0 0 10px 0;">4️⃣ Cảnh báo vượt tốc độ</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Thiết lập ngưỡng cảnh báo khi vượt tốc độ cho phép. Ví dụ: +5km/h = cảnh báo khi vượt quá 5km/h so với giới hạn.</p>
+                    <div class="config-row">
+                        <label>Giới hạn:</label>
+                        <select id="selSpeed">
+                            <option value="O0">+0km/h (Chính xác)</option>
+                            <option value="O1">+1km/h</option>
+                            <option value="O2">+2km/h</option>
+                            <option value="O3">+3km/h</option>
+                            <option value="O4">+4km/h</option>
+                            <option value="O5">+5km/h</option>
+                            <option value="O6">+6km/h</option>
+                            <option value="O7">+7km/h</option>
+                            <option value="O8">+8km/h</option>
+                            <option value="O9">+9km/h</option>
+                        </select>
+                        <button id="btnSpeed">Gửi</button>
+                    </div>
+                </div>
+                
+                <!-- 5. BOOT SOUND (V2 ONLY) -->
+                <div id="soundSection" style="background: #fff9e6; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #ffa726; display: none;">
+                    <h3 style="color: #856404; margin: 0 0 10px 0;">5️⃣ Âm thanh khởi động (chỉ V2)</h3>
+                    <p style="color: #856404; margin-bottom: 15px;">Chọn âm thanh phát ra khi bật thiết bị. Tính năng này chỉ áp dụng cho HUD Mini V2.</p>
+                    <div class="config-row">
+                        <label>Âm thanh:</label>
+                        <select id="selSound">
+                            <option value="B0">Tắt âm thanh</option>
+                            <option value="B1">Âm 1</option>
+                            <option value="B2">Âm 2</option>
+                            <option value="B3">Âm 3</option>
+                            <option value="B4">Âm 4</option>
+                            <option value="B5">Âm 5</option>
+                            <option value="B6">Âm 6</option>
+                            <option value="B7">Âm 7</option>
+                            <option value="B8">Âm 8</option>
+                        </select>
+                        <button id="btnSound">Gửi</button>
+                    </div>
+                </div>
+                
+                <!-- 6. CUSTOM COMMAND -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #667eea;">
+                    <h3 style="color: #667eea; margin: 0 0 10px 0;">6️⃣ Lệnh tùy chỉnh (Nâng cao)</h3>
+                    <p style="color: #666; margin-bottom: 15px;">Dành cho người dùng nâng cao - Gửi lệnh đặc biệt đến thiết bị.</p>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="customCmd" placeholder="Nhập lệnh (ví dụ: VERSION,...)" style="flex: 1;">
+                        <button id="btnSendCmd" style="white-space: nowrap;">Gửi</button>
+                    </div>
+                </div>
+                
+                <!-- 7. LOG -->
+                <div style="margin-top: 30px;">
+                    <h3 style="margin: 0 0 10px 0; color: #667eea;">📝 Log Serial</h3>
+                    <p style="color: #666; margin-bottom: 10px; font-size: 14px;">Hiển thị các lệnh đã gửi và phản hồi từ thiết bị (dùng để kiểm tra và debug)</p>
+                    <textarea id="serialLog" readonly></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ -->
+        <div class="card">
+            <h2>❓ Câu hỏi thường gặp</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <span>🔹</span>
+                            <span>Làm sao biết thiết bị của tôi là V1 hay V2?</span>
+                        </div>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p style="color: #555; line-height: 1.6;">
+                                <strong>HUD Mini V1:</strong> Có thiết kế hình vuông<br>
+                                <strong>HUD Mini V2:</strong> Có thiết kế hình tròn với mặt kính tràn viền
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <span>🔹</span>
+                            <span>Tại sao không thấy cổng COM khi cài firmware?</span>
+                        </div>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p style="color: #555; line-height: 1.6;">
+                                Có một số nguyên nhân phổ biến:<br>
+                                • Cáp USB chỉ hỗ trợ sạc, không truyền dữ liệu<br>
+                                • Chưa cài đặt driver cho chip USB to Serial (CH340/CP2102/CH9102)<br>
+                                • Cổng USB trên máy tính bị lỗi - thử cổng USB khác<br>
+                                • Thiết bị chưa được nhận diện - khởi động lại máy tính
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <span>🔹</span>
+                            <span>Có mất dữ liệu khi cập nhật firmware không?</span>
+                        </div>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p style="color: #555; line-height: 1.6;">
+                                <strong>CÓ.</strong> Các cài đặt cá nhân (xoay màn hình, UI, cảnh báo tốc độ, âm thanh) sẽ được đặt về mặc định sau khi cập nhật firmware.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <span>🔹</span>
+                            <span>Cần cập nhật firmware bao lâu một lần?</span>
+                        </div>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p style="color: #555; line-height: 1.6;">
+                                Chỉ cần cập nhật khi có phiên bản mới với:<br>
+                                • Tính năng mới hữu ích<br>
+                                • Sửa lỗi quan trọng<br>
+                                • Cải thiện hiệu suất hoặc độ ổn định<br><br>
+                                Không bắt buộc phải cập nhật thường xuyên. Nếu thiết bị đang hoạt động tốt, bạn có thể giữ nguyên phiên bản hiện tại.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <div class="accordion-title">
+                            <span>🔹</span>
+                            <span>Tại sao phải ngắt Serial khi flash firmware?</span>
+                        </div>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p style="color: #555; line-height: 1.6;">
+                                Cổng COM (Serial) chỉ có thể được sử dụng bởi một ứng dụng tại một thời điểm. Khi bạn đang kết nối Serial để cấu hình, cổng đã bị "chiếm giữ". Nếu không ngắt kết nối, công cụ flash firmware sẽ không thể truy cập cổng và sẽ báo lỗi.<br><br>
+                                <strong>Hệ thống sẽ tự động xử lý điều này:</strong><br>
+                                • Khi nhấn flash firmware → tự động ngắt Serial<br>
+                                • Sau khi flash xong → bạn có thể kết nối lại Serial để cấu hình
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SEO Content Section -->
+        <div class="card">
+            <h2>🔍 Thông tin về HUD Mini Firmware Update Tool</h2>
+            
+            <div style="color: #555; line-height: 1.8;">
+                <h3 style="color: #667eea; margin: 20px 0 10px 0;">Công cụ cập nhật firmware HUD Mini chuyên nghiệp</h3>
+                <p style="margin-bottom: 15px;">
+                    <strong>HUD Mini Firmware Update Tool</strong> là công cụ trực tuyến giúp bạn dễ dàng cập nhật firmware cho thiết bị HUD Mini V1 (hình vuông) và HUD Mini V2 (hình tròn). Công cụ hỗ trợ Cập nhật và Cấu hình tùy chỉnh trực tiếp từ trình duyệt web Chrome hoặc Edge, không cần cài đặt phần mềm phức tạp.
+                </p>
+                
+                <h3 style="color: #667eea; margin: 20px 0 10px 0;">Tính năng nổi bật</h3>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li><strong>HUD Mini Firmware Update Tool:</strong> Cập nhật firmware mới nhất cho HUD Mini ngay trên trình duyệt</li>
+                    <li><strong>Cấu hình Serial trực tiếp:</strong> Điều chỉnh xoay màn hình, giao diện UI, cảnh báo tốc độ</li>
+                    <li><strong>Hỗ trợ đa phiên bản:</strong> Tương thích với HUD Mini V1 và V2</li>
+                    <li><strong>Giao diện thân thiện:</strong> Hướng dẫn chi tiết từng bước cho người dùng mới</li>
+                    <li><strong>Không cần cài đặt:</strong> Hoạt động 100% trên Web Browser</li>
+                </ul>
+                
+                <h3 style="color: #667eea; margin: 20px 0 10px 0;">Lưu ý:</h3>
+                <p style="margin-bottom: 15px;">
+                    <strong>HUD Mini</strong> là sản phẩm được thiết kế và chế tác theo nhu cầu cá nhân. Đây là sản phẩm độc lập, không phải hàng chính hãng, không thuộc sở hữu, liên kết hay được bảo trợ bởi bất kỳ thương hiệu nào. Mọi tên gọi, nhãn hiệu nếu được đề cập chỉ mang tính mô tả.
+                </p>
+                
+                <h3 style="color: #667eea; margin: 20px 0 10px 0;">Yêu cầu hệ thống</h3>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>Trình duyệt: Google Chrome hoặc Microsoft Edge (khuyến nghị phiên bản mới nhất)</li>
+                    <li>Kết nối: Cáp USB Type-C hỗ trợ truyền dữ liệu</li>
+                    <li>Driver: CH340, CP2102 hoặc CH9102 USB to Serial</li>
+                    <li>Hệ điều hành: Windows 10/11, macOS, hoặc Linux</li>
+                </ul>
+                
+                <h3 style="color: #667eea; margin: 20px 0 10px 0;">Hướng dẫn cập nhật firmware HUD Mini</h3>
+                <p style="margin-bottom: 15px;">
+                    Quy trình cập nhật firmware cho HUD Mini rất đơn giản: (1) Kết nối thiết bị HUD với máy tính qua USB, (2) Chọn đúng phiên bản V1 hoặc V2, (3) Nhấn nút Install và chọn cổng COM, (4) Đợi quá trình flash hoàn tất. Sau khi cập nhật thành công, bạn có thể cấu hình các tùy chọn như xoay màn hình, chọn giao diện UI, thiết lập cảnh báo tốc độ và âm thanh khởi động (chỉ V2).
+                </p>
+                
+                <h3 style="color: #667eea; margin: 20px 0 10px 0;">Hỗ trợ và bảo hành</h3>
+                <p style="margin-bottom: 15px;">
+                    Mọi thắc mắc về sản phẩm HUD Mini hoặc vấn đề kỹ thuật trong quá trình cập nhật firmware, vui lòng liên hệ <strong>TechZone Automotive</strong> qua Facebook hoặc TikTok. Chúng tôi cam kết hỗ trợ khách hàng để đảm bảo trải nghiệm sử dụng sản phẩm tốt nhất.
+                </p>
+                
+                <div style="background: #f0f7ff; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #2196F3;">
+                    <strong>🏷️ Tags:</strong> HUD Mini V1, HUD Mini V2, cập nhật firmware HUD Mini, lỗi HUD Mini, sửa lỗi HUD Mini, cập nhật HUD Mini, màn hình mini trên ô tô, heads up display xe hơi, TechZone Automotive, Mini HUD V1 V2, cấu hình HUD, phụ kiện ô tô
+                </div>
+            </div>
+        </div>
+        
+        <!-- FOOTER -->
+        <div class="footer">
+            <div class="footer-brand">TechZone Automotive</div>
+            <div class="footer-tagline">Car Retrofit & Accessories</div>
+            
+            <div class="footer-divider"></div>
+            
+            <div class="footer-social">
+                <a href="https://facebook.com/49techzone" target="_blank" rel="noopener">Facebook</a>
+                <a href="https://tiktok.com/@techzone_automotive" target="_blank" rel="noopener">TikTok</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== ACCORDION FUNCTIONALITY ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            const accordionHeaders = document.querySelectorAll('.accordion-header');
+            
+            accordionHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const item = this.parentElement;
+                    const wasActive = item.classList.contains('active');
+                    
+                    // Optional: Close other items in the same accordion
+                    // Uncomment below to enable "only one open at a time" behavior
+                    /*
+                    const accordion = item.closest('.accordion');
+                    accordion.querySelectorAll('.accordion-item').forEach(i => {
+                        i.classList.remove('active');
+                    });
+                    */
+                    
+                    // Toggle current item
+                    if (wasActive) {
+                        item.classList.remove('active');
+                    } else {
+                        item.classList.add('active');
+                    }
+                });
+            });
+        });
+        
+        // ==================== FIRMWARE SELECTION ====================
+        let selectedManifest = 'manifest_v2.json';
+        let selectedHardware = 'V2';
+        
+        const cards = document.querySelectorAll('.firmware-card');
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                cards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedManifest = card.dataset.manifest;
+                selectedHardware = card.dataset.hardware;
+                updateFlashButton();
+                updateSoundSection();
+            });
+        });
+        
+        function updateFlashButton() {
+            const container = document.getElementById('flash-button-container');
+            container.innerHTML = `
+                <esp-web-install-button 
+                    manifest="${selectedManifest}">
+                    <button slot="activate" id="installBtn">🚀 INSTALL - CÀI ĐẶT FIRMWARE</button>
+                </esp-web-install-button>
+            `;
+            
+            // Listen for install events
+            const installButton = container.querySelector('esp-web-install-button');
+            const activateButton = container.querySelector('#installBtn');
+            
+            // INTERCEPT CLICK ON INSTALL BUTTON - disconnect BEFORE popup
+            activateButton.addEventListener('click', async (e) => {
+                if (port) {
+                    console.log('Install button clicked - Auto-disconnecting Serial...');
+                    // Disconnect serial synchronously before the flash tool popup appears
+                    await disconnectSerial();
+                    alert('ℹ️ Đã tự động ngắt kết nối Serial để flash firmware.\n\nBây giờ bạn có thể chọn cổng COM trong popup.\n\nSau khi flash xong, bạn có thể kết nối lại Serial để cấu hình.');
+                }
+            }, true); // Use capture phase to run before esp-web-tools
+            
+            installButton.addEventListener('state-changed', (ev) => {
+                console.log('State changed:', ev.detail);
+            });
+            
+            installButton.addEventListener('install-finished', () => {
+                document.getElementById('success-message').style.display = 'flex';
+                setTimeout(() => {
+                    document.getElementById('success-message').style.display = 'none';
+                }, 10000);
+            });
+        }
+        
+        function updateSoundSection() {
+            const soundSection = document.getElementById('soundSection');
+            if (selectedHardware === 'V2') {
+                soundSection.style.display = 'block';
+            } else {
+                soundSection.style.display = 'none';
+            }
+        }
+        
+        // Initialize with default manifest
+        updateFlashButton();
+        updateSoundSection();
+        
+        // ==================== SERIAL CONFIG ====================
+        let port, reader, writer;
+        const encoder = new TextEncoder();
+        const decoder = new TextDecoder();
+        
+        function log(text, direction = 'info') {
+            const logArea = document.getElementById('serialLog');
+            const prefix = direction === 'in' ? '📥 ' : direction === 'out' ? '📤 ' : '  ';
+            logArea.value += prefix + text;
+            if (!text.endsWith('\n')) logArea.value += '\n';
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+        
+        async function writeSerial(data) {
+            if (!writer) {
+                alert('⚠️ Chưa kết nối Serial!');
+                return;
+            }
+            try {
+                await writer.write(encoder.encode(data));
+                log(data.trim(), 'out');
+            } catch (err) {
+                log(`Lỗi ghi: ${err.message}`, 'err');
+            }
+        }
+        
+        async function disconnectSerial() {
+            const btn = document.getElementById('btnConnect');
+            const status = document.getElementById('status');
+            const controls = document.getElementById('config-controls');
+            
+            try {
+                if (reader) {
+                    try {
+                        await reader.cancel();
+                    } catch (e) {
+                        console.log('Reader cancel error (ignored):', e);
+                    }
+                    try {
+                        reader.releaseLock();
+                    } catch (e) {
+                        console.log('Reader release error (ignored):', e);
+                    }
+                    reader = null;
+                }
+                
+                if (writer) {
+                    try {
+                        writer.releaseLock();
+                    } catch (e) {
+                        console.log('Writer release error (ignored):', e);
+                    }
+                    writer = null;
+                }
+                
+                if (port) {
+                    try {
+                        await port.close();
+                    } catch (e) {
+                        console.log('Port close error (ignored):', e);
+                    }
+                    port = null;
+                }
+            } catch (e) {
+                console.error('Disconnect error:', e);
+            } finally {
+                // Always reset UI state
+                port = null;
+                reader = null;
+                writer = null;
+                btn.textContent = '🔌 Kết nối Serial';
+                btn.disabled = false;
+                status.textContent = '📡 Chưa kết nối';
+                controls.style.display = 'none';
+            }
+        }
+        
+        document.getElementById('btnConnect').addEventListener('click', async () => {
+            const btn = document.getElementById('btnConnect');
+            const status = document.getElementById('status');
+            const controls = document.getElementById('config-controls');
+            
+            if (port) {
+                // Disconnect
+                await disconnectSerial();
+            } else {
+                // Connect
+                try {
+                    btn.disabled = true;
+                    status.textContent = '🔄 Đang kết nối...';
+                    
+                    port = await navigator.serial.requestPort();
+                    await port.open({ baudRate: 115200 });
+                    writer = port.writable.getWriter();
+                    reader = port.readable.getReader();
+                    
+                    btn.textContent = '🔌 Ngắt kết nối';
+                    btn.disabled = false;
+                    status.textContent = '✅ Đã kết nối';
+                    controls.style.display = 'block';
+                    document.getElementById('serialLog').value = '';
+                    document.getElementById('versionDisplay').textContent = 'Chưa kiểm tra';
+                    
+                    // Update sound section based on selected hardware
+                    updateSoundSection();
+                    
+                    // Read loop
+                    (async () => {
+                        try {
+                            while (true) {
+                                const { value, done } = await reader.read();
+                                if (done) break;
+                                const text = decoder.decode(value, { stream: true });
+                                log(text, 'in');
+                                
+                                // Check if response contains version info (e.g., V2.0.2)
+                                const versionMatch = text.match(/V\d+\.\d+\.\d+/);
+                                if (versionMatch) {
+                                    document.getElementById('versionDisplay').textContent = `✅ Phiên bản: ${versionMatch[0]}`;
+                                    document.getElementById('versionDisplay').style.borderColor = '#28a745';
+                                    document.getElementById('versionDisplay').style.color = '#28a745';
+                                }
+                            }
+                        } catch (err) {
+                            if (port) {
+                                log(`⚠️ Lỗi đọc: ${err.message}`, 'err');
+                                status.textContent = `⚠️ Mất kết nối: ${err.message}`;
+                                // Auto disconnect on read error
+                                await disconnectSerial();
+                            }
+                        }
+                    })();
+                } catch (err) {
+                    console.error('Connect error:', err);
+                    status.textContent = `❌ Lỗi kết nối: ${err.message}`;
+                    // Reset state on connection error
+                    await disconnectSerial();
+                    
+                    // Show user-friendly error message
+                    if (err.name === 'NotFoundError') {
+                        alert('❌ Không tìm thấy cổng COM. Vui lòng:\n• Kiểm tra cáp USB\n• Chọn đúng cổng trong hộp thoại\n• Thử cổng USB khác');
+                    } else if (err.name === 'InvalidStateError') {
+                        alert('❌ Cổng COM đang được sử dụng bởi ứng dụng khác.\n• Đóng các ứng dụng Serial khác\n• Rút cáp USB, đợi 5 giây, cắm lại\n• Thử lại');
+                    } else {
+                        alert(`❌ Lỗi kết nối: ${err.message}\n\nVui lòng thử:\n• Rút cáp USB, đợi 5 giây, cắm lại\n• Khởi động lại trình duyệt\n• Kiểm tra driver CH340/CP2102/CH9102`);
+                    }
+                }
+            }
+        });
+        
+        // ==================== BUTTON EVENTS ====================
+        
+        // Version check button
+        document.getElementById('btnCheckVersion').addEventListener('click', () => {
+            document.getElementById('versionDisplay').textContent = '⏳ Đang kiểm tra...';
+            document.getElementById('versionDisplay').style.borderColor = '#667eea';
+            document.getElementById('versionDisplay').style.color = '#667eea';
+            writeSerial('VERSION\n');
+        });
+        
+        // Rotation button
+        document.getElementById('btnRotation').addEventListener('click', () => {
+            const value = document.getElementById('selRotation').value;
+            writeSerial(value + '\n');
+        });
+        
+        // UI button
+        document.getElementById('btnUI').addEventListener('click', () => {
+            const value = document.getElementById('selUI').value;
+            writeSerial(value + '\n');
+        });
+        
+        // Speed button
+        document.getElementById('btnSpeed').addEventListener('click', () => {
+            const value = document.getElementById('selSpeed').value;
+            writeSerial(value + '\n');
+        });
+        
+        // Sound button
+        document.getElementById('btnSound').addEventListener('click', () => {
+            const value = document.getElementById('selSound').value;
+            writeSerial(value + '\n');
+        });
+        
+        // Custom command button
+        document.getElementById('btnSendCmd').addEventListener('click', () => {
+            const input = document.getElementById('customCmd');
+            if (input.value) {
+                writeSerial(input.value + '\n');
+                input.value = '';
+            }
+        });
+        
+        console.log('✅ Mini HUD Flash Tool Ready!');
+    </script>
+</body>
+</html>

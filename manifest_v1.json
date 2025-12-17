@@ -1,0 +1,15 @@
+{
+  "name": "HUD MINI V1",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "baudRate": 921600,
+      "parts": [
+        {
+          "path": "FW_V1_V203.bin",
+          "offset": 0
+        }
+      ]
+    }
+  ]
+}
